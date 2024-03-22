@@ -2,5 +2,5 @@ from django.shortcuts import render
 
 # Create your views here.
 
-def index(req):
-    return render(req, 'chat/index.html')
+def index(request):
+    return render(request, 'chat/index.html', {'username': 'Jan'})
