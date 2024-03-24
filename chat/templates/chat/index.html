@@ -35,6 +35,7 @@
     </nav>
   </div>
   <main class="mdl-layout__content">
+    {% if request.user.is_authenticated %}
     <div class="page-content">
       <!-- Accent-colored raised button with ripple -->
       <!-- Floating Multiline Textfield -->
@@ -58,6 +59,15 @@
           Send
         </button>
       </form>
+      <ul>
+        {% for message in messages %}
+        <li>{{ message.author }}: {{ message.text }}</li>
+        {% endfor %}
+      </ul>
     </div>
+    {% else %}
+    <h2>Logged out</h2>
+    <p>Please <a href="login">log in</a></p>
+    {% endif %}
   </main>
 </div>
