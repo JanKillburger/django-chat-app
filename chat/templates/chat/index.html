@@ -38,13 +38,15 @@
     <div class="page-content">
       <!-- Accent-colored raised button with ripple -->
       <!-- Floating Multiline Textfield -->
-      <form action="#">
+      <form action="" method="post">
+        {% csrf_token %}
         <div class="mdl-textfield mdl-js-textfield">
           <textarea
             class="mdl-textfield__input"
             type="text"
             rows="3"
             id="sample5"
+            name="message"
           ></textarea>
           <label class="mdl-textfield__label" for="sample5"
             >Text lines...</label
