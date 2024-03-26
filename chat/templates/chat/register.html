@@ -1,0 +1,23 @@
+<form action="register" method="post">
+  {% csrf_token %}
+  <label>
+    Benutzername:
+    <input type="text" name="username" required />
+  </label>
+  <label>
+    Passwort:
+    <input type="password" name="password" required />
+  </label>
+  <label>
+    Passwort wiederholen:
+    <input type="password" name="password2" required />
+  </label>
+  <label>
+    Email:
+    <input type="email" name="email" required />
+  </label>
+  <button type="submit">Erstellen</button>
+</form>
+{% if error_message %}
+<p>{{ error_message }}</p>
+{% endif %}
