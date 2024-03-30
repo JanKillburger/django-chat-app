@@ -1,21 +1,35 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block head %} {% load static %} 
+<link rel="stylesheet" href="{% static "chat/css/style.css" %}" />
+<script defer src="{% static "chat/js/script.js" %}"></script>
+{% endblock head %}
+{% block content %}
 <!-- Always shows a header, even in smaller screens. -->
 <div class="page-content">
   <!-- Accent-colored raised button with ripple -->
   <!-- Floating Multiline Textfield -->
+  <div class="chatlist-wrapper">
+    <ul id="chatlist" class="chatlist">
+      {% for message in messages %}
+      <li>
+        <span>{{ message.created_at|date:"d.m.y" }} </span>
+        <span>{{ message.author.username }}: </span>
+        <span>{{ message.text }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    <div id="chatlist-anchor"></div>
+  </div>
   <form method="post" id="message-form">
     {% csrf_token %}
-    <div class="mdl-textfield mdl-js-textfield">
+    <div class="mdl-textfield mdl-js-textfield w-100">
       <textarea
-        class="mdl-textfield__input"
+        class="mdl-textfield__input w-100"
         type="text"
         rows="3"
         id="message"
         name="message"
       ></textarea>
-      <label class="mdl-textfield__label" for="sample5"
-        >Text lines...</label
-      >
+      <label class="mdl-textfield__label" for="sample5">Type a message...</label>
     </div>
     <button
       class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
@@ -23,44 +37,5 @@
       Send
     </button>
   </form>
-  <ul id="chatlist">
-    {% for message in messages %}
-    <li>{{ message.author }}: {{ message.text }}</li>
-    {% endfor %}
-  </ul>
 </div>
-<script defer>
-  const chatlist = document.querySelector('#chatlist');
-  document
-    .getElementById('message-form')
-    .addEventListener('submit', sendMessage);
-
-  function sendMessage(ev) {
-    ev.preventDefault();
-    messageEl = document.getElementById('message');
-    if (messageEl.value) {
-      let fd = new FormData();
-      fd.append('message', messageEl.value);
-      fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-      fetch('/chat/', {
-        method: 'post',
-        body: fd,
-      })
-        .then((res) => {
-          if (res.status === 200) {
-            addMessage();
-          }
-        })
-        .catch((err) => console.error(err));
-    }
-  }
-
-  function addMessage() {
-    const date = new Date()
-    const message = document.createElement('li');
-    message.textContent = {{request.user.first_name}}` ${date.toLocaleDateString()}: ${messageEl.value}`;
-    chatlist.appendChild(message);
-    messageEl.value = '';
-  }
-</script>
-{% endblock %}
+{% endblock content %}

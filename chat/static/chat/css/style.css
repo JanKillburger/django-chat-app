@@ -1,0 +1,22 @@
+.chatlist-wrapper {
+  max-height: 65vh;
+  overflow: auto;
+}
+
+.chatlist-wrapper * {
+  overflow-anchor: none;
+}
+
+#chatlist-anchor {
+  overflow-anchor: auto;
+  height: 1px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.chatlist {
+  list-style-type: none;
+  padding-inline-start: 0;
+}

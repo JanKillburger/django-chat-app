@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponseRedirect, JsonResponse
@@ -34,6 +34,10 @@ def login_view(request):
             return HttpResponseRedirect(next)
         else:
             return render(request, "chat/login.html",{ "error_message": "Invalid username and/or password. Please try again.", "next": next })
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect("/chat/login")
         
 def register(request):
     if request.method == "GET":
