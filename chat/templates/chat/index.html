@@ -1,73 +1,66 @@
-<link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/icon?family=Material+Icons"
-/>
-<link
-  rel="stylesheet"
-  href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css"
-/>
-<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-
+{% extends "base.html" %} {% block content %}
 <!-- Always shows a header, even in smaller screens. -->
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-  <header class="mdl-layout__header">
-    <div class="mdl-layout__header-row">
-      <!-- Title -->
-      <span class="mdl-layout-title">Hallo {{request.user.first_name}}!</span>
-      <!-- Add spacer, to align navigation to the right -->
-      <div class="mdl-layout-spacer"></div>
-      <!-- Navigation. We hide it in small screens. -->
-      <nav class="mdl-navigation mdl-layout--large-screen-only">
-        <a class="mdl-navigation__link" href="">Link</a>
-        <a class="mdl-navigation__link" href="">Link</a>
-        <a class="mdl-navigation__link" href="">Link</a>
-        <a class="mdl-navigation__link" href="">Link</a>
-      </nav>
+<div class="page-content">
+  <!-- Accent-colored raised button with ripple -->
+  <!-- Floating Multiline Textfield -->
+  <form method="post" id="message-form">
+    {% csrf_token %}
+    <div class="mdl-textfield mdl-js-textfield">
+      <textarea
+        class="mdl-textfield__input"
+        type="text"
+        rows="3"
+        id="message"
+        name="message"
+      ></textarea>
+      <label class="mdl-textfield__label" for="sample5"
+        >Text lines...</label
+      >
     </div>
-  </header>
-  <div class="mdl-layout__drawer">
-    <span class="mdl-layout-title">Hallo {{request.user.first_name}}!</span>
-    <nav class="mdl-navigation">
-      <a class="mdl-navigation__link" href="">Link</a>
-      <a class="mdl-navigation__link" href="">Link</a>
-      <a class="mdl-navigation__link" href="">Link</a>
-      <a class="mdl-navigation__link" href="">Link</a>
-    </nav>
-  </div>
-  <main class="mdl-layout__content">
-    {% if request.user.is_authenticated %}
-    <div class="page-content">
-      <!-- Accent-colored raised button with ripple -->
-      <!-- Floating Multiline Textfield -->
-      <form action="" method="post">
-        {% csrf_token %}
-        <div class="mdl-textfield mdl-js-textfield">
-          <textarea
-            class="mdl-textfield__input"
-            type="text"
-            rows="3"
-            id="sample5"
-            name="message"
-          ></textarea>
-          <label class="mdl-textfield__label" for="sample5"
-            >Text lines...</label
-          >
-        </div>
-        <button
-          class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
-        >
-          Send
-        </button>
-      </form>
-      <ul>
-        {% for message in messages %}
-        <li>{{ message.author }}: {{ message.text }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% else %}
-    <h2>Logged out</h2>
-    <p>Please <a href="login">log in</a></p>
-    {% endif %}
-  </main>
+    <button
+      class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+    >
+      Send
+    </button>
+  </form>
+  <ul id="chatlist">
+    {% for message in messages %}
+    <li>{{ message.author }}: {{ message.text }}</li>
+    {% endfor %}
+  </ul>
 </div>
+<script defer>
+  const chatlist = document.querySelector('#chatlist');
+  document
+    .getElementById('message-form')
+    .addEventListener('submit', sendMessage);
+
+  function sendMessage(ev) {
+    ev.preventDefault();
+    messageEl = document.getElementById('message');
+    if (messageEl.value) {
+      let fd = new FormData();
+      fd.append('message', messageEl.value);
+      fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+      fetch('/chat/', {
+        method: 'post',
+        body: fd,
+      })
+        .then((res) => {
+          if (res.status === 200) {
+            addMessage();
+          }
+        })
+        .catch((err) => console.error(err));
+    }
+  }
+
+  function addMessage() {
+    const date = new Date()
+    const message = document.createElement('li');
+    message.textContent = {{request.user.first_name}}` ${date.toLocaleDateString()}: ${messageEl.value}`;
+    chatlist.appendChild(message);
+    messageEl.value = '';
+  }
+</script>
+{% endblock %}

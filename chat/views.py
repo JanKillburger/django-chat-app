@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.core import serializers
+from django.http import HttpResponseRedirect, JsonResponse
 from .models import Message, Chat
 
 # Create your views here.
@@ -9,9 +10,13 @@ DEFAULT_LOGIN_REDIRECT = "/chat/"
 
 @login_required(login_url="/chat/login")
 def index(request):
+    """Renders the chat
+    """
     if request.method == "POST":
         chat = Chat.objects.get(pk=1)
-        Message.objects.create(text=request.POST["message"], chat=chat, author=request.user, receiver=request.user)
+        message = Message.objects.create(text=request.POST["message"], chat=chat, author=request.user, receiver=request.user)
+        data = serializers.serialize("json", [message, ])
+        return JsonResponse({"message": data[1:-1]})
     messages = Message.objects.filter(chat__id=1)
     return render(request, 'chat/index.html', {'messages': messages})
 
